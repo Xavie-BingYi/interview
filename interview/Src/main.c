@@ -43,10 +43,11 @@ uint32_t io_read(register uint32_t addr) {
 int main(void)
 {
 	io_write(0x40023800 + 0x30, 0x40);  // IO port G clock enabled
-	io_write(0x40021800 + 0x18, 0x2000);  // PG13 set bit
-	io_write(0x40021800, 0x4000000);  // PG13 set output mode
-	io_write(0x40021800 + 0x0C, 0x0);  // PG13 set No pull-up, pull-down
-	io_write(0x40021800 + 0x08, 0x0);  // PG13 set Low speed
+	//io_write(0x40021800 + 0x18, 0x2000);  // PG13 set bit
+	io_write(0x40021800 + 0x14, 0x2000);  // PG13 set bit
+	io_write(0x40021800 + 0x00, 0x4000000);  // PG13 set output mode
+	//io_write(0x40021800 + 0x0C, 0x0);  // PG13 set No pull-up, pull-down
+	//io_write(0x40021800 + 0x08, 0x0);  // PG13 set Low speed
 
 	while(1){
 	}
