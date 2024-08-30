@@ -1,0 +1,7 @@
+../Src/gpio.c:12:6:io_write	1
+../Src/gpio.c:21:10:io_read	1
+../Src/gpio.c:33:5:gpio_init	1
+../Src/gpio.c:39:5:gpio_set_dir	1
+../Src/gpio.c:46:5:gpio_set_data	1
+../Src/gpio.c:53:5:gpio_pull	1
+../Src/gpio.c:60:5:gpio_alternate_function	2

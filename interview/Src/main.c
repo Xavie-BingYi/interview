@@ -17,37 +17,25 @@
  */
 
 #include <stdint.h>
+#include <gpio.h>
 
-void io_write(register uint32_t addr, register uint32_t val) {
-    /**
-     * r is put the value to general register
-     * Qo is let the input be memory address, arm specific
-     */
-    asm volatile("str %1, %0"
-            : : "Qo" (*(volatile uint32_t *) addr), "r" (val));
-}
 
-uint32_t io_read(register uint32_t addr) {
-    /**
-     * r is put the value to general register
-     * Qo is let the input be memory address, arm specific
-     */
-	uint32_t val;
-    asm volatile("ldr %0, %1"
-            : "=r" (val)
-            : "Qo" (*(volatile uint32_t *) addr));
-    return val;
-}
 
 
 int main(void)
 {
-	io_write(0x40023800 + 0x30, 0x40);  // IO port G clock enabled
-	//io_write(0x40021800 + 0x18, 0x2000);  // PG13 set bit
+	gpio_init(INIT_PORT_G);
+	gpio_set_dir(GPIO_PORT_G , GPIO_PIN_14 , GPIO_OUTPUT);
+	gpio_set_data(GPIO_PORT_G , GPIO_PIN_14 , GPIO_HIGH_VAL);
+	gpio_pull(GPIO_PORT_G , GPIO_PIN_14 , GPIO_NO_PULL);
+
+
+	/*io_write(0x40023800 + 0x30, 0x40);  // IO port G clock enabled
+	io_write(0x40021800 + 0x18, 0x2000);  // PG13 set bit
 	io_write(0x40021800 + 0x14, 0x2000);  // PG13 set bit
 	io_write(0x40021800 + 0x00, 0x4000000);  // PG13 set output mode
-	//io_write(0x40021800 + 0x0C, 0x0);  // PG13 set No pull-up, pull-down
-	//io_write(0x40021800 + 0x08, 0x0);  // PG13 set Low speed
+	io_write(0x40021800 + 0x0C, 0x0);  // PG13 set No pull-up, pull-down
+	io_write(0x40021800 + 0x08, 0x0);  // PG13 set Low speed*/
 
 	while(1){
 	}
