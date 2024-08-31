@@ -19,6 +19,10 @@ git commit
 git push
 ```
 
+# C語言編譯流程
+- https://chivincent.gitbooks.io/c-tutorial/content/chapter2/compile.html
+- https://medium.com/@alastor0325/https-medium-com-alastor0325-compilation-to-linking-c07121e2803
+
 # Enable GPIO
 ## init
 1. 確認原理圖中欲點亮之GPIO之腳位的Port & Pin
@@ -30,9 +34,11 @@ git push
 再開啟對應模式的register _8.4
 - set mode : 設定input或output或alternate function
 - set/get bit : 
-	- output : (0x14) or bit 0~15為set bit 16~31為reset bit(0x18)
+	- output : (0x14) or bit 0 ~ 15為set bit 16 ~ 31為reset bit(0x18)
 	- intput : (0x10)
 - set pull-up/-down
 - set speed 
 
-# C語言編譯流程
+# UART
+- 協議 : https://blog.csdn.net/XiaoXiaoPengBo/article/details/124043034
+- 工具 : https://tera-term.en.softonic.com/?ex=RAMP-2081.4
