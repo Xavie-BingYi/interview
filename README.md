@@ -58,6 +58,9 @@ git push
 接收器和傳送器的Baud rate分別由USART_BRR設置USARTDIV的整數部分(Mantissa)及小數部分(Fraction)，計算方式如下所示:
 ![alt text](image.png)
 
+- 範例 : https://blog.csdn.net/m0_50728139/article/details/113747627
+ ![alt text](image-1.png)
+
 其中USARTDIV為一個無號的定點數(unsigned fixed point number)，fCK為給周邊設備的時鐘。
 
 - 當OVER8 = 0 時，小數部分佔USART_BRR的DIV_Fraction[3:0]，共 4 bits
