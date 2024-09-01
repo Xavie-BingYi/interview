@@ -56,10 +56,10 @@ git push
 
 ## Fractional baud rate generation的設定
 接收器和傳送器的Baud rate分別由USART_BRR設置USARTDIV的整數部分(Mantissa)及小數部分(Fraction)，計算方式如下所示:
-![alt text](image.png)
+ ![alt text](./note%20image/波特率公式.png)
 
 - 範例 : https://blog.csdn.net/m0_50728139/article/details/113747627
- ![alt text](image-1.png)
+ ![alt text](./note%20image/波特率計算範例.png)
 
 其中USARTDIV為一個無號的定點數(unsigned fixed point number)，fCK為給周邊設備的時鐘。
 
