@@ -1,2 +1,0 @@
-../Src/uart.c:11:6:usart_rcc_init	1
-../Src/uart.c:17:6:usart_init	1

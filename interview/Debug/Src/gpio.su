@@ -1,7 +1,0 @@
-../Src/gpio.c:12:6:io_write	4	static,ignoring_inline_asm
-../Src/gpio.c:21:10:io_read	16	static,ignoring_inline_asm
-../Src/gpio.c:33:5:gpio_init	24	static
-../Src/gpio.c:39:5:gpio_set_dir	32	static
-../Src/gpio.c:46:5:gpio_set_data	32	static
-../Src/gpio.c:53:5:gpio_pull	32	static
-../Src/gpio.c:60:5:gpio_alternate_function	40	static
