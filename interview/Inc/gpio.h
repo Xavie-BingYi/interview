@@ -23,7 +23,9 @@
 #define GPIO_PORT_C 0x40020800
 #define GPIO_PORT_B 0x40020400
 #define GPIO_PORT_A 0x40020000
-#define GPIO_USART1 0x40011000
+#define USART6_REGISTER 0x40014000
+#define USART1_REGISTER 0x40011000
+
 
 #define RCC_AHB1_ENR 0X30
 #define RCC_APB2_ENR 0X44
@@ -68,8 +70,8 @@
 #define GPIO_ALTERNATE 2  // Alternate function mode
 #define GPIO_ANALOG    3  // Analog mode
 
-#define GPIO_LOW_VAL  0
 #define GPIO_HIGH_VAL 1
+#define GPIO_LOW_VAL  0
 
 #define GPIO_NO_PULL   0
 #define GPIO_PULL_UP   1
@@ -94,8 +96,6 @@
 
 
 
-void io_write(register uint32_t addr, register uint32_t val);
-uint32_t io_read(register uint32_t addr);
 int gpio_init(int port_offset);
 int gpio_set_dir(int port_add , int pin , int mode);
 int gpio_set_data(int port_add , int pin , int data);

@@ -7,28 +7,7 @@
 
 #include <stdint.h>
 #include <gpio.h>
-
-
-void io_write(register uint32_t addr, register uint32_t val) {
-    /**
-     * r is put the value to general register
-     * Qo is let the input be memory address, arm specific
-     */
-    asm volatile("str %1, %0"
-            : : "Qo" (*(volatile uint32_t *) addr), "r" (val));
-}
-
-uint32_t io_read(register uint32_t addr) {
-    /**
-     * r is put the value to general register
-     * Qo is let the input be memory address, arm specific
-     */
-	uint32_t val;
-    asm volatile("ldr %0, %1"
-            : "=r" (val)
-            : "Qo" (*(volatile uint32_t *) addr));
-    return val;
-}
+#include <io.h>
 
 int gpio_init(int port_offset){
 	int rcc_status = io_read(RCC_REGISTER + RCC_AHB1_ENR);
@@ -37,23 +16,26 @@ int gpio_init(int port_offset){
 }
 
 int gpio_set_dir(int port_add , int pin , int mode){
-	int pin_status = io_read(port_add + GPIO_MODE);
+	int gpio_mode = port_add + GPIO_MODE;
+	int pin_status = io_read(gpio_mode);
 	int pin_mode_offset = mode << pin*2;
-	io_write(port_add + GPIO_MODE , pin_status|pin_mode_offset);  // set output mode
+	io_write(gpio_mode , pin_status|pin_mode_offset);  // set output mode
 	return 0;
 }
 
 int gpio_set_data(int port_add , int pin , int data){
-	int pin_status = io_read(port_add + GPIO_OUTPUT_DATA);
+	int gpio_output_data = port_add + GPIO_OUTPUT_DATA;
+	int pin_status = io_read(gpio_output_data);
 	int pin_data_offset = data << pin;
-	io_write(port_add + GPIO_OUTPUT_DATA , pin_status|pin_data_offset);  // set output voltage
+	io_write(gpio_output_data , pin_status|pin_data_offset);  // set output voltage
 	return 0;
 }
 
 int gpio_pull(int port_add , int pin , int pull_mode){
-	int pin_status = io_read(port_add + GPIO_PULL);
+	int gpio_pull = port_add + GPIO_PULL;
+	int pin_status = io_read(gpio_pull);
 	int pin_pull_offset = pull_mode << pin*2;
-	io_write(port_add + GPIO_PULL , pin_status|pin_pull_offset);  // set output voltage
+	io_write(gpio_pull , pin_status|pin_pull_offset);  // set output voltage
 	return 0;
 }
 

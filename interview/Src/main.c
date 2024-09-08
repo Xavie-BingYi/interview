@@ -18,6 +18,8 @@
 
 #include <stdint.h>
 #include <gpio.h>
+#include <uart.h>
+#include <io.h>
 
 
 
@@ -29,7 +31,6 @@ int main(void)
 	gpio_set_data(GPIO_PORT_G , GPIO_PIN_14 , GPIO_HIGH_VAL);
 	gpio_pull(GPIO_PORT_G , GPIO_PIN_14 , GPIO_NO_PULL);
 
-
 	/*io_write(0x40023800 + 0x30, 0x40);  // IO port G clock enabled
 	io_write(0x40021800 + 0x18, 0x2000);  // PG13 set bit
 	io_write(0x40021800 + 0x14, 0x2000);  // PG13 set bit
@@ -37,7 +38,13 @@ int main(void)
 	io_write(0x40021800 + 0x0C, 0x0);  // PG13 set No pull-up, pull-down
 	io_write(0x40021800 + 0x08, 0x0);  // PG13 set Low speed*/
 
+	usart_init();
+
+
+
+
 	while(1){
+		usart_txData(USART1_REGISTER, 'B');
 	}
     /* Loop forever */
 	for(;;);
