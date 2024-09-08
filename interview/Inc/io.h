@@ -10,6 +10,7 @@
 
 #include <stdint.h>
 
+#define mask_bit(n) (~((~0UL) << n))
 
 void io_write(register uint32_t addr, register uint32_t val);
 uint32_t io_read(register uint32_t addr);

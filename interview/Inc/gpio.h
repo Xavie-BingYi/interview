@@ -30,17 +30,17 @@
 #define RCC_AHB1_ENR 0X30
 #define RCC_APB2_ENR 0X44
 
-#define INIT_PORT_K 0x400
-#define INIT_PORT_J 0x200
-#define INIT_PORT_I 0x100
-#define INIT_PORT_H 0x080
-#define INIT_PORT_G 0x040
-#define INIT_PORT_F 0x020
-#define INIT_PORT_E 0x010
-#define INIT_PORT_D 0x008
-#define INIT_PORT_C 0x004
-#define INIT_PORT_B 0x002
-#define INIT_PORT_A 0x001
+#define INIT_PORT_K 10
+#define INIT_PORT_J 9
+#define INIT_PORT_I 8
+#define INIT_PORT_H 7
+#define INIT_PORT_G 6
+#define INIT_PORT_F 5
+#define INIT_PORT_E 4
+#define INIT_PORT_D 3
+#define INIT_PORT_C 2
+#define INIT_PORT_B 1
+#define INIT_PORT_A 0
 
 #define GPIO_MODE 0x00
 #define GPIO_OUTPUT_DATA 0x14
@@ -97,10 +97,10 @@
 
 
 int gpio_init(int port_offset);
-int gpio_set_dir(int port_add , int pin , int mode);
-int gpio_set_data(int port_add , int pin , int data);
-int gpio_pull(int port_add , int pin , int pull_mode);
-int gpio_alternate_function(int port_add , int pin , int alternate_mode);
+int gpio_set_dir(int port_addr , int pin , int mode);
+int gpio_set_data(int port_addr , int pin , int data);
+int gpio_pull(int port_addr , int pin , int pull_mode);
+int gpio_alternate_function(int port_addr , int pin , int alternate_mode);
 
 
 #endif /* GPIO_H_ */
