@@ -54,4 +54,9 @@ void usart_txData(int bus, uint8_t tx_buffer);
 // receive 1 byte data
 //u8 usart_rxByte(void);
 
+void usart_putc(uint8_t c);
+void usart_printint(int xx, int base, int sgn);
+void usart_printfloat(float xx);
+void usart_printf(const char *fmt, ...);
+
 #endif /* UART_H_ */

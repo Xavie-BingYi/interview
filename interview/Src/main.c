@@ -42,9 +42,9 @@ int main(void)
 
 
 
-
 	while(1){
-		usart_txData(USART1_REGISTER, 'B');
+//		usart_txData(USART1_REGISTER, '1');
+		usart_printf("abc %d %c %s %x", 123, '*', "asd", 10);
 	}
     /* Loop forever */
 	for(;;);

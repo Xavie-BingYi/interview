@@ -83,3 +83,98 @@ void usart_txData(int bus, uint8_t tx_buffer){
 	while ((usart_sr&0x40) == 0)  // wait until TC = 1
 		usart_sr = io_read(usart_srAdd);
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+void usart_putc(uint8_t c) {
+	usart_txData(USART1_REGISTER, c);
+}
+
+void usart_printint(int xx, int base, int sgn)
+{
+  static char digits[] = "0123456789ABCDEF";
+  char buf[16];
+  int i, neg;
+  int x;
+
+  neg = 0;
+  if(sgn && xx < 0){
+    neg = 1;
+    x = -xx;
+  } else {
+    x = xx;
+  }
+
+  i = 0;
+  do{
+    buf[i++] = digits[x % base];
+  }while((x /= base) != 0);
+  if(neg)
+    buf[i++] = '-';
+
+  while(--i >= 0)
+    usart_putc(buf[i]);
+}
+
+void usart_printfloat(float xx) // can't work
+{
+  int beg=(int)(xx);
+  int fin=(int)(xx*100)-beg*100;
+  usart_printint(xx, 10, 1);
+  usart_putc('.');
+  if(fin<10)
+	  usart_putc('0');
+  usart_printint(fin, 10, 1);
+}
+
+// Only understands %d, %x, %p, %s, %f.
+void usart_printf(const char *fmt, ...)	// TODO, https://github.com/shreshthtuli/xv6/blob/master/printf.c
+{
+  char *s;
+  int c, i, state;
+  int *ap;
+
+  state = 0;
+  ap = (int*)(void*)&fmt + 1;
+  for(i = 0; fmt[i]; i++){
+    c = fmt[i] & 0xff;
+    if(state == 0){
+      if(c == '%'){
+        state = '%';
+      } else {
+        usart_putc(c);
+      }
+    } else if(state == '%'){
+      if(c == 'd'){
+        usart_printint(*ap, 10, 1);
+        ap++;
+      } else if(c == 'x' || c == 'p'){
+        usart_printint(*ap, 16, 0);
+        ap++;
+      } else if(c == 's'){
+        s = (char*)*ap;
+        ap++;
+        if(s == 0)
+          s = "(null)";
+        while(*s != 0){
+          usart_putc(*s);
+          s++;
+        }
+      } else if(c == 'c'){
+        usart_putc(*ap);
+        ap++;
+      } else if(c == 'f'){ // MOD-2
+        usart_printfloat((float)*ap);
+        ap++;
+      } else if(c == '%'){
+        usart_putc(c);
+      } else {
+        // Unknown % sequence.  Print it to draw attention.
+        usart_putc('%');
+        usart_putc(c);
+      }
+      state = 0;
+    }
+  }
+}
+
