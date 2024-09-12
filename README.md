@@ -1,6 +1,6 @@
-# MarkDown語法
-- <https://hackmd.io/@eMP9zQQ0Qt6I8Uqp2Vqy6w/SyiOheL5N/%2FBVqowKshRH246Q7UDyodFA?type=book>
-
+# 陳昕佑筆記
+- 筆記：<https://hackmd.io/@zoanana990/S1RySgR3A>
+- MarkDown語法：<https://hackmd.io/@eMP9zQQ0Qt6I8Uqp2Vqy6w/SyiOheL5N/%2FBVqowKshRH246Q7UDyodFA?type=book>
 
 # 要怎麼更新程式碼到 git 上面
 git 檔案分成兩種：有追蹤、沒有追蹤的
@@ -26,239 +26,190 @@ git push
 - <https://chivincent.gitbooks.io/c-tutorial/content/chapter2/compile.html>
 - <https://medium.com/@alastor0325/https-medium-com-alastor0325-compilation-to-linking-c07121e2803>
 
+- 這整個過程可以大致上分成四個步驟，分別為預處理(pre-processing)、編譯(compilation)、組譯(assembly)與連結(linking)。
 
-# GPIO
-## init
-1. 確認原理圖中欲點亮之GPIO之腳位的Port & Pin
-2. 確認方塊圖中的模組在哪個Bus上(AHB1,...) _DATASHEET2 Description
-3. 確認每個模組映射到的位址(RCC,Port,...) _SPEC2.3 Memory map
-4. 確認需enable哪一個bit _SPEC6.3 RCC regist map
-## GPIO regist
-確認對應GPIO port的位址 _SPEC2.3 Memory map
-再開啟對應模式的register _8.4
-- set mode : 設定input或output或alternate function
-- set/get bit : 
-	- output : (0x14) or bit 0 ~ 15為set bit 16 ~ 31為reset bit(0x18)
-	- intput : (0x10)
-- set pull-up/-down
-- set speed 
+## 預處理 (pre-processing)
+在這個階段編譯器主要的工作是展開引用的外部檔案、macro 及 define 。
 
+1. 刪除所有的#define並展開所有macro：
+	這一步會將所有的macro替換為其對應的值，並且刪除原始的#define定義，因為它已經不再需要保留在最終的編譯文件中
+2. 處理所有的預編譯條件(#ifdef, #include等)：
+	這包括判斷條件式編譯是否成立，並將引用的外部文件展開。
+3. 刪除所有的註解：
+	註解對於預處理器而言是無效資訊，因此會在這個階段被移除。
+4. 增加行號以及文件識別名：這一步有助於在後續編譯過程中發生錯誤時提供精確的錯誤行數和文件名稱
 
-# UART (適用STM32F4xx全系列)
-- 協議大全 : <https://wiki.csie.ncku.edu.tw/embedded/USART?revision=0ef36332e497437cb7b1fdabc6f0a33202ab2159>
-- 協議簡介 : <https://blog.csdn.net/XiaoXiaoPengBo/article/details/124043034>
-- 工具 : <https://tera-term.en.softonic.com/?ex=RAMP-2081.4>
+利用以下指令可以產生預處理後的 main.i檔。
+```
+g++ -E main.cpp -o main.i
+```
+實際的 .i 檔案中的內容可能會有數千行，例如"iostream"是一個非常複雜的標準庫頭文件。展開後可以看到許多細節，包括模板、函數原型等。
 
-## 簡介
-通用同步異步接收發送器(USART)提供靈活的全雙工數據交換方式，適用於需要行業標準NRZ異步串行數據格式的外部設備。USART通過分數波特率生成器，提供非常廣泛的波特率範圍。
+## 編譯 (compilation)
+此階段編譯器會將展開後的程式碼轉換成組合語言。此階段又可以細分成五個小步驟，分別為詞法分析(Lexical Analysis)、語法剖析(Syntax Analysis)、語意分析(semantic analysis)與原始碼最佳化(source code optimization)與程式碼生成與最佳化(code generation and optimization)。
 
-他支援同步單向通訊 & 半雙工單線通訊。同時支援LIN(本地互聯網絡)，Smartcard協議和IrDA(紅外通訊技術
-) SIR(串行紅外) ENDEC(串行紅外編碼器/解碼器)規範，以及數據通訊(CTS/RTS)。也允許多處理器通訊。
+1. 詞法分析或稱為掃描 (Scanning)：將原始代碼轉換成一系列的「詞」(tokens)。
+2. 語法剖析或稱為語法分析(Parsing)：根據語法規則，將詞組織成語法樹(Syntax Tree)。
+3. 語意分析(Semantic Analysis)：檢查語法樹是否符合語言的語意規則，例如類型檢查、變量的作用域等。
+4. 原始碼最佳化(Source Code Optimization)：在生成組合語言之前，對原始碼進行最佳化，以提高性能或減少資源消耗。
+5. 程式碼生成與最佳化(Code Generation and Optimization)：將原始碼轉換為組合語言或機器碼，同時進行一些底層的最佳化。
 
-## 特性
-- 全雙工的**非同步通訊**
-- NRZ標準資料格式(Mark/Space)
-	NRZ(Nonreturn to Zero):不歸零編碼
-	這是一種傳送資訊的編碼方式，它以正脈波代表1，負脈波代表0，當訊號連續為'1'時，則保持正脈波，直到出現'0'為止
-	它的特色是編碼解碼較為簡單，但缺乏同步傳輸的能力，且無法提供較佳的訊號校正能力。
-- 分數波特率生成器系統
-	通用可編程發送和接收波特率(參考Datasheets以獲取最大APB頻率下的波特率)
-- 可程式化的資料長度 (8 or 8+1 bits)
-- 可程式化的停止位元 (1 or 2 bits)
-- 具LIN Master同步中斷發送能力 & LIN Slave中斷檢測能力
-	當USART硬體配置為LIN時，支援13位元中斷生成 & 10/11位元中斷檢測
-- 提供同步傳輸的CLK信號
-- IrDA SIR編碼解碼器
-	正常模式下支援3/16 bit duration
-- Smartcard模擬能力
-	- 略
-- 單線半雙工通訊
-- 藉由DMA的資料傳輸，每個USART都能用DMA發送和接收資料
-	- 略
-- 獨立的發送器和接收器的Enable Bit(TE、RE)
-- 傳輸檢測標誌
-	- 接收緩衝區滿(Receive buffer full, RXNE)
-	- 傳送緩衝區空(Transmit buffer empty, TXE)
-	- 傳輸結束(End of transmission flags, TC)
-- 奇偶檢測控制
-	- 發送奇偶檢測位(Transmits parity bit)
-	- 對接收的資料進行檢測(Checks parity of received data byte)
-- 4個錯誤檢測標誌
-	- 溢出錯誤(Overrun error)
-	- 雜訊檢測(Noise detection)
-	- 幀差錯誤(Frame error)
-	- 奇偶檢測錯誤(Parity error)
-- 支援10種中斷
-	- CTS改變(CTS changes, CTSIE)
-	- LIN中斷檢測(LIN break detection, LBDIE)
-	- 傳送緩衝區空(Transmit data register empty, TXEIE)
-	- 傳送完成(Transmission complete, TCIE)
-	- 接收緩衝區滿(Receive data register full, RXNEIE)
-	- 空閒線路檢測(Idle line received, IDLEIE)
-	- 溢出錯誤(Overrun error)
-		在一般情況下，本身不產生中斷，在DMA情況下，則由EIE產生中斷，經檢驗USART_CR1的FE位可得知溢出錯誤
-	- 幀差錯誤(Framing error)
-		在一般情況下，本身不產生中斷，而由RXNE產生中斷，經檢驗USART_CR1的FE位可得知Frame錯誤
-		在DMA情況下下，則由EIE產生中斷，經檢驗USART_CR1的FE位得知錯誤
-	- 雜訊錯誤(Noise error)
-		在一般情況下，本身不產生中斷，而由RXNE產生中斷，經檢驗USART_CR1的NF位得知錯誤
-		在DMA情況下下，則由EIE產生中斷，經檢驗USART_CR1的NF位得知錯誤
-	- 奇偶檢驗錯誤(Parity error, PEIE)
-- 多處理器通訊 - 如果地址未匹配，則進入靜音模式
-- 喚醒靜音模式 (通過空閒線路檢測 or 地址標記檢測)
-- 2種接收器喚醒模式
-	- Address bit(MSB,9^th^ bit)：MSB為'1'的資料被認為是地址，否則為一般資料。
-	在這資料中，接收端會將最後4 bits與USART_CR2暫存器中的ADD位比較，若相同則清除RWU位，後面的資料將能正常接收。
-	- Idle line：在接收端處於靜默(mute mode)時，可透過發送空閒符號(即所有位均為'1'的資料)，喚醒接收端。
+利用以下指令可以將main.cpp直接轉成.s檔案，編譯器會自動執行所有步驟，包括預處理、編譯，最後生成組合語言的.s檔案。不需要手動經過預處理階段，編譯器會處理好。
+```
+g++ -S main.cpp -o main.s
+```
+如果原本即有.i檔，則可輸入以下指令，直接將預處理後的.i檔作為輸入，生成組合語言的.s檔。
+編譯器會跳過預處理階段，直接從.i檔案開始，執行編譯並生成.s檔案。
+```
+g++ -S main.i -o main.s
+```
 
-## 功能介紹
-- USART Block Diagram
+### 詞法分析(Lexical Analysis)
+- 分割原始碼：將程式碼轉換為一系列的token(詞彙單元)。
+- 分類Token：將這些token分為不同的類型，例如保留關鍵字、標示符、常量(數字或字串)、運算符和特殊符號等等。
+- 以 a = 3 + 5; 為例：
+	- a：標示符（identifier）
+	- =：賦值運算符（special symbol）為特殊符號
+	- 3 和 5：常量（constant）
+	- +：加法運算符（special symbol）為特殊符號
+	- ;：分號（special symbol）為特殊符號
+- 這些 token 是語言的基本構建塊，編譯器在詞法分析階段將它們識別出來，以便在後續的語法分析和語意分析階段進行處理。
 
-  	![alt text](./note%20image/USART%20block%20diagram.png)
+### 語法剖析(Syntax Analysis)
+它主要負責將一系列的token組織成語法樹(syntax tree)，以檢查程式碼的語法結構是否正確。
+- 構建語法樹：將詞法分析階段生成的token按照語法規則組織成樹狀結構，稱為語法樹(syntax tree)或解析樹(Parse Tree)。
+- 檢查語法正確性：確保程式碼符合語言的語法規則，例如運算式的結構是否正確，括號是否匹配等。
+- 語法樹的作用：
+	- 幫助分析：語法樹能幫助我們分析複雜的運算式或語句結構是否符合語言的語法規則。
+	- 後續處理：語法樹可以作為後續步驟(如語意分析、最佳化、生成中間代碼)的基礎。
+- 對於 a = 3 + 5; 這段程式碼，語法樹會展示出等式的左邊和右邊的結構，顯示加法運算是如何在等式中進行的。
+![alt text](./note%20image/syntax%20tree.png)
 
-- 任何USART雙向通信至少需要兩個腳位：接收資料輸入(RX)和發送資料輸出(TX)
-	- RX: 接收資料為串行輸入，並藉由採樣技術來判斷有效的資料及雜訊。
-	- TX: 發送資料。當發送器被啟動時，如果沒有傳送數據，則TX保持高電位；被禁用時，輸出引腳則返回I/O配置。
-	在Single-wire或Smartcard mode時，此I/O同時被用於資料的傳送和接收(在USART層，數據則通過SW_RX接收)。
+### 語意分析 (semantic analysis)
+這一階段主要負責檢查語法樹中每個結構的語意是否正確。
+1. 靜態語意分析：
+- 定義：靜態語意分析是在編譯期間進行的，編譯器會檢查代碼中的語意錯誤。
+- 例子：型態檢查（例如，確保你不會將整數和字符串進行相加）、變量的使用前初始化、函數調用時的參數匹配等。
+- 檢查項目：型態兼容性、變量的作用域、函數的定義和調用是否匹配等。
+2. 動態語意分析：
+- 定義：動態語意分析是在程式執行期間進行的，這些錯誤通常無法在編譯期間檢測到。
+- 例子：除數為零的錯誤、數組越界、空指針解引用等。
+- 檢查項目：程式運行時的錯誤，這些錯誤只有在程式運行時才會顯現出來。
 
-- 通過這些引腳，在正常USART模式下，串行數據做為幀(frame)，進行傳送與接收，包含：
-	- 一個idle line在傳送與接收前
-	- 一個起始位(start bit)
-	- 一個data word(8 or 9 bits)，從最低有效位開始(根據USART_CR1暫存器中的M位選擇8或9位元決定資料長度)
-	- 0.5, 1, 1.5或2個停止bitS，表示幀的結束
-	- 這個介面使用分數波特率生成器 - 12 bits的整數 & 4 bits的小數表示方法
-	- 一個狀態暫存器(USART_SR)
-	- 資料暫存器(USART_DR)
-	- baud rate暫存器(USART_BRR) - 12 bits的整數 & 4 bits的小數
-	- Smartcard模式有一個保護時間暫存器(USART_GTPR)
+經過分析後，我們可以在文法樹上加上語意型別。
 
-- 另外在同步模式中，還需要其他腳位：
-	- CK(SCLK)：發送器的時鐘輸出，用於同步傳輸的時鐘，相當於SPI主模式。(略)
+![alt text](./note%20image/commented%20syntax%20tree.png)
 
-- 在Hardware flow control中必須包含腳位:
-	- CTS(nCTS): 清除發送，若在高電位，則當目前資料傳送結束後，中斷下一次的資料傳送
-	- RTS(nRTS): 發送請求，若在低電位，則表示USART已經準備好接收資料
+### 原始碼最佳化（Source Code Optimization）
+現代編譯器通常會有不同層級的最佳化方式。這裡提到的是原始碼層級的最佳化。
+例如，在編譯過程中，我們可以知道3+5的值是8因此可以直接用8來取代。
+此外，為了提高程式碼轉換為組合語言的效率，通常會使用三位址碼(Three Address Code)來改寫程式碼。
 
-### USART character description (data frame)
-- 資料長度(word length)根據USART_CR1暫存器中的M位選擇8或9位元
+- 三位址碼的基本形式如下，x = y op z，在等號的右側至多只能有一個操作符號(operator)。
+例如 a = 4 * 5 + 3 可以轉換成以下的形式，
+```
+t1 = 4 * 5
+t2 = t1 + 3 
+a = t2
+```
+這樣的轉換將複雜的表達式分解為多個簡單的步驟，有助於後續的優化和生成機器碼。
 
-	![alt text](./note%20image/word%20length%20programming.png)
-
-- 在起始位(start bit)期間，TX處於低電位，在停止位期間，TX處於高電位
-
-- 一個idle character被解釋全由'1'組成，並接著下一個資料的起始位
-
-- 一個break character則全由'0'所組成，在整個break frame結束時傳送1或2個停止位('1')以確認起始位
-
-- 傳送和接收皆由共同的波特率生成器驅動，當enable bit分別被設置時，clock將被生成
-
-## 傳送器
-傳送器依據USART_CR1的M位狀態來決定發送8或9位元的資料。
-當transmit enable bit(TE)被設定時，transmit shift register的資料將由TX腳位送出，對應的時鐘脈衝會輸出至CK(SCLK)引腳。
-
-### 資料的傳送
-在USART發送期間，TX首先傳送資料的最低有效位元(least significant bit)，因此在此模式中，USART_DR包含一個緩衝區(TDR)，介於內部總線(bus)和transmit shift register之間。
-
-每個資料(character)在傳送前都會有一個低電位的起始位for one bit period，並由可配置數量的停止位結束。
-
-USART支援以下停止位：0.5, 1, 1.5 和 2 個停止位。
-
-Note：
-在數據傳輸期間，不應重置TE位元。重置TE位元會在傳輸過程中損壞TX引腳上的數據，因為波特率計數器會被凍結，當前正在傳輸的數據會丟失。在啟用TE位元後，會發送一個空閒幀(idle frame)。
-
-### 設置停止位
-每個資料傳輸的停止位數量可以在控制暫存器2(USART_CR2)的第13和第12位進行設定
-	- 1 bit的stop bit：預設的默認停止位位元數 
-	- 2 bits的stop bit：normal USART, single-wire 和 modem modes 
-	- 0.5 bits的stop bit：Smartcard mode接收數據用 
-	- 1.5 bits的stop bit：Smartcard mode發送數據用
-
-一個閒置幀(idle frame)傳輸包含停止位
-
-stop bits其實不算是個bit，他是傳輸結束後的一段時間(period)，用以區隔每個傳輸的資料，其功用是在非同步傳輸的時候可以告訴接收器，資料傳輸已經結束。透過增加stop bits的長度，可讓接收器能有足夠的時間可以處理該資料
-
-當m = 0時，一個break transmission有10個低位元；而m = 1時，則有11個低位元，並且無法傳輸transmit long breaks（長度超過10/11個低位元）。
-
-另外，由於transmit shift register搬移到TDR中最少需要1/2 baud clock，因此在Smartcard mode的接收中，最少必須設定0.5 bit的stop bits
-
-![alt text](./note%20image/Configurable%20stop%20bits.png)
-
-### 傳送器的設定
-1. 設定USART_CR1暫存器的UE位來啟動傳輸
-2. 設定USART_CR1暫存器的M位決定資料長度
-3. 設定USART_CR2暫存器中的STOP位來決定停止位元的長度
-4. 採用多緩衝器的話，則須設定USART_CR3的DMAT啟動DMA，並設置DMA的暫存器
-5. 利用USART_BRR暫存器設定baud rate
-6. 設置USART_CR1的TE位，在第一筆資料傳送前，傳送一個idle frame
-7. 將欲發送的資料放入USART_DR中(這會清除TXE位元)，若有多筆資料要傳送，則重複步驟
-8. 一個frame的資料發送完畢後，TC位會被設定(TC=1)，這表示最後一個frame的傳輸已完成。這在禁用USART或進入停止模式(Halt mode)時是必須的，以避免破壞最後一次傳輸。
-
-### Single byte communication
-![alt text](./note%20image/TC,TXE%20behavior%20when%20transmitting.png)
-
-- 當資料放入USART_DR會由硬體清除TXE位，則表示: 
-	1. 資料已從TDR中進入transmit shift register，資料的發送已開始
-	2. TDR暫存器已被清空
-	3. 下一筆資料可放入USART_DR中
-
-- 若TXEIE位被設置，則會產生一個中斷
-
-- 如果USART正在發送資料，對USART_DR的寫入資料會移到TDR暫存器中，並在目前的資料傳送結束後把該筆資料移進移位暫存器(transmit shift register)中
-
-- 如果USART沒有在發送資料，則對USART_DR的寫入資料會直接放入移位暫存器，並啟動傳送，當傳送開始時，硬體會立即設定TXE位
-
-- 如果一個frame被傳輸(在停止位之後)，且TXE位被設置，TC位將變為高電平。如果USART_CR1暫存器中的TCIE位被設置，則會產生中斷。
-
-- 在將最後一個數據寫入USART_DR寄存器後，必須等待TC=1，才能禁用USART或讓微控制器進入低功耗模式。
-
-- 先讀取USART_SR暫存器，再寫入USART_DR暫存器，則可清除TC位
-- TC位也可以通過寫入'0'來清除。這種清除程序僅建議在多緩衝區(Multibuffer communication)通訊時使用。
-
-### 傳送斷開符號
-透過設定USART_CR1的SBK位，可以發送一個斷開符號，斷開符號的長度取決於M位。
-如果SBK=1，則在目前的資料發送後，會再TX線上發送一個斷開符號，當傳送完成後，會由硬體恢復SBK位。
-USART會由硬體在最後一個斷開符號的結束處插入一個’1’，確保能辨識下一個資料的起始位。
-
-### 傳送空閒符號
-設置USART_CR1的TE位會使得USART在發送第一筆資料前，發送一個空閒符號，喚醒接收端。
+### 代碼生成與最佳化 (code generation and optimization)
+根據目標機器的不同，編譯器會選擇最適合的指令來生成並最佳化組合語言。例如，可以用位移操作來取代乘法指令，以提升效能。
+- 程式碼生成：這是編譯過程中的最後一步，將中間代碼(如三位址碼)轉換為目標機器的組合語言或機器碼。
+- 程式碼最佳化：這是在生成的組合語言中進行的優化過程，旨在提高程式碼的執行效率。這包括選擇最有效的指令和技術來優化生成的程式碼。
+	- 例如以位移操作取代乘法：在某些情況下，乘法運算(例如乘以2的次方)可以用位移操作(如左移)來取代，這樣可以提高執行效率，因為位移操作通常比乘法指令執行得更快。
 
 
+以我們之前的例子 a = 3 + 5 為例，可能會生成如下的組合語言指令：
+```
+mov eax, 8
+mov address_of_a, eax
+```
+這段組合語言指令首先將加法的結果8存入加法暫存器eax中，然後將eax中的值轉移到另一個暫存器ecx中。
 
-## 接收器
-接收器依據USART_CR1 M位的狀態來決定接收8或9位元的資料。
-在USART接收期間，RX從資料最低有效位元(least significant bit)開始接收，因此在此模式中，USART_DR和received shift register之間包含一個緩衝器(RDR)。
+## 組譯 (assembly)
+- 組譯是將組合語言轉換成機器碼的過程。組合語言是一種低級語言，其指令與特定的處理器架構相關。組譯器將這些指令轉換為處理器可以理解的二進位機器碼。
+- 組譯器(Assembler)會根據指令集架構(Instruction Set Architecture, ISA)中的對照表，將組合語言指令轉換為對應的機器碼指令。這個對照表包含了每條組合語言指令及其對應的機器碼表示。
+- 組譯的步驟：
+1. 讀取組合語言源碼：組譯器讀取由組合語言編寫的源碼。
+2. 解析指令：將組合語言中的每條指令解析為相應的機器碼指令。
+3. 生成機器碼：根據指令集架構的對照表，將每條組合語言指令轉換為對應的機器碼。
+4. 生成目標檔案：將所有的機器碼指令寫入目標檔案（通常是 .obj 或 .o 檔案）。
+
+經過以下指令，便可以產生目標文件檔(.o/.obj)。
+```
+g++ -c main.cpp -o main.o
+```
+補充：.cpp檔或是.i檔生成.o檔，並不一定需要先生成.s檔(.s檔案是組合語言源碼的中間檔案，通常用於調試或分析)；
+通用編譯流程描述了從原始程式碼到最終可執行檔案的完整流程，雖然每個階段有其特定的處理目的和生成的檔案。即使某些階段可以被省略（如不生成 .s 檔案），整體流程仍然包括這些步驟。
+
+- 目標文件檔遵循可執行文件格式 (ELF) 來儲存。
+	- ELF(Executable and Linkable Format)是一種常見的文件格式，用於儲存可執行檔案、目標檔案、共享庫等。ELF格式廣泛用於UNIX-like系統(如 Linux)。
+	- 目標文件格式內部的結構可以包含以下區段：
+		1. 代碼區段（Text Segment）：儲存編譯後的機器碼，這是程式的執行代碼部分。
+		2. 數據區段（Data Segment）：儲存靜態數據，如全域變數和靜態變數的初始值。
+		3. 符號表（Symbol Table）：包含了所有符號（如變數和函數）的名稱和位址，用於連結和調試。
+		4. 重定位表（Relocation Table）：用於記錄需要在連結階段調整的地址或位置，以便將程式碼和數據正確地載入到內存中。
+	- 目標文件檔遵循特定格式(如 ELF)，並包含不同的區段來儲存程式的機器碼、數據、符號及其他資訊。這些區段在"連結階段"用來生成最終的可執行檔案或庫檔案。
+- 分開代碼區段與數據區段的做法，在程式運行時提高了安全性、效能以及資源的使用效率。主要好處：
+	1. 執行時可以給予區段不同的讀寫權限(代碼 read-only，數據 read-write)
+	2. 增加緩存(cache)的命中率
+	3. 讓多個相同的程序 (process) 共用程式區段，以減少記憶體用量。
+
+## 鏈接 (linking)
+在編譯程式的過程中，鏈接(linking)是至關重要的一個步驟。這個過程讓編譯器知道程式中外部函數或變數的具體位址。例如，當我們在main.cpp裡使用func.cpp裡的foo() 函數時，編譯器需要確定foo()函數的位置才能正確呼叫它。
+
+### 符號與符號名
+在編譯過程中，每個被定義的變數或函數都會有一個名稱，稱為「符號名」(symbol name)，它代表一個特定的變數或函數的位置或地址。
+
+- 符號 (symbol)：編譯器會將程式中的變數、函數、常量等視為符號。這些符號對應著程式中的具體實體，例如變數的記憶體地址或函數的代碼。
+- 符號名 (symbol name)：符號的名稱，例如變數名或函數名。編譯器通過這些名稱來追蹤程式中符號的使用和位置。
+
+在鏈接過程中，會進行符號解析(symbol resolution)，確保每個符號名都能被正確解析，並且對應到程式中的正確位置。
+
+### 鏈接過程可以分為兩種形式：
+1. 靜態鏈接 (Static Linking)
+	- 概念：在靜態鏈接中，所有被引用的函數和變數都會直接整合到最終的可執行檔案內，無需依賴外部的函式庫。
+	- 優點：程式是自包含的。這意味著當程式執行時，它不需要依賴任何外部檔案即可正常運作。
+	- 缺點：因為所有引用的代碼都包含在可執行檔內，這會增加可執行檔案的大小。
+舉例：
+如果我們在main.cpp中呼叫foo()函數，靜態鏈接會將func.cpp裡的foo()函數編譯好的機器碼和main.cpp一起合併，生成最終的可執行檔案。
+
+2. 動態鏈接 (Dynamic Linking)
+	- 概念：在動態鏈接中，外部函數或變數的地址並不會在編譯期確定，而是推遲到程式執行時才解析。這通常用於共享庫(如 .so 或 .dll)，這些共享庫會在程式執行時動態載入。
+	- 優點：減少了可執行檔案的大小，並允許多個程式共享相同的庫檔案，節省記憶體資源。
+	- 缺點：程式執行時需要依賴這些動態庫。如果動態庫遺失或版本不對，程式可能會無法正常執行。
+舉例：
+在動態鏈接的情況下，鏈接器只會記錄 foo() 函數的符號，實際的地址在程式執行時會從共享庫中動態查找。
+
+### 靜態與動態鏈接的符號處理
+1. 靜態鏈接：符號名在鏈接過程中解析。當最終的機器碼生成後，符號名不再需要，因為所有的位址已經被固定。
+2. 動態鏈接：符號名會保留到程式執行時，用來從動態庫中解析函數和變數。
+
+### 靜態鏈接 vs 動態鏈接的使用場合
+1. 嵌入式系統：在某些嵌入式系統中，或者在需要高可靠性的情境中，靜態鏈接較常見。因為它能保證所有依賴在編譯時已經解決，不需要在執行時依賴其他外部檔案。
+2. 共享庫的可用性：動態鏈接更適合在需要節省存儲空間的場景中使用，因為多個程式可以共享相同的函式庫，減少記憶體使用量。
+
+### 總結：鏈接的目的
+無論是靜態還是動態鏈接，最終的目的都是讓代碼中的外部函數或變數的位址在最終的可執行檔案中明確化，確保程式能夠正確執行。
+
+### 更深入的細節：符號表與重定位表
+在編譯階段，我們可以知道會呼叫哪些符號，但不知道它們的具體位址，因此會賦予這些符號一個暫時的位址，並且記錄在符號表(symbol table)和重定位表(relocation table)中。
+
+鏈接器會根據這些表進行重定位，將暫時的位址替換為最終的實際位址，完成可執行檔案的生成。
 
 
 
 
+# 作業系統
+- RTOS基礎知識 : https://www.freertos.org/zh-cn-cmn-s/Documentation/01-FreeRTOS-quick-start/01-Beginners-guide/01-RTOS-fundamentals
+- 作業系統 : https://hackmd.io/@Chang-Chia-Chi/OS-CH3
+- C語言編譯流程 : https://hackmd.io/@zoanana990/S1RySgR3A
+- Context Switch範例 : https://github.com/jserv/mini-arm-os/tree/master/02-ContextSwitch-1
 
-# Fractional baud rate generation的設定
-接收器和傳送器的Baud rate分別由USART_BRR設置USARTDIV的整數部分(Mantissa)及小數部分(Fraction)，計算方式如下所示:
-
- ![alt text](./note%20image/波特率公式.png)
-
-- 範例 : https://blog.csdn.net/m0_50728139/article/details/113747627
- ![alt text](./note%20image/波特率計算範例.png)
-
-其中USARTDIV為一個無號的定點數(unsigned fixed point number)，fCK為給周邊設備的時鐘。
-
-- 當OVER8 = 0 時，表示取樣率小數部分佔USART_BRR的DIV_Fraction[3:0]，共 4 bits
-- 當OVER8 = 1 時，小數部分佔USART_BRR的DIV_Fraction[2:0]，共 3 bits，其中DIV_Fraction[3]應該保持’0’
-
-USART_BRR被更新後，baud rate的計數器中的值也會同時被更新，因此在傳輸途中不應該更新USART_BRR中的值。 另外，如果TE或RE被分別禁止，則baud rate的計數器也會停止計數。
-
-使用stm32f407vgt6官方lib時，會透過檔案中設定的時脈和baud rate去換算出USART_BRR的值，包含整數與小數部分。.
-- BRR(USARTDIV) 的值 Mantissa = 0x088B ; Fraction = 0x08 =>計算方式 0x88B->0d2187 + 8/16 = 2187.5
-
-if over8=0 計算baud rate的方式: baud rate = usart時脈/(8(2-over8)DIV).
-- usart時脈42Mhz, baud rate = 42000000/(822187.5) = 1200
-
-usart是接在APB BUS上方，stm32f407vgt6有兩組APB各對應不同usart。usart時脈要看APB供應的時脈， APB時脈要透過RCC和PLL設定去看clock tree。.
-- 預設stm32f4-discovery這塊板子外部震盪器(HSE_VALUE)是8Mhz(官方lib好像設定成25Mhz)。.
-- 8Mhz透過pll_M(8)除頻輸入PLL =>8Mhz/8=1Mhz.
-- 1Mhz輸入PLL,透過pll_N(0x5400)倍頻再透過pll_P(2)除頻，作為sysclk => (1Mhz*0x5400>>6)/2 = 168Mhz.
-- sysclk轉接HCLK都是168Mhz.
-- HCLK>>2轉給PCLK1 => 168Mhz>>2 = 42Mhz.
-
-
-
+搞懂
+1. 中斷是什麼
+2. context switch 是什麼
+3. startup.c 在做什麼
+4. linker.ld 是什麼
