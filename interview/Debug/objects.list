@@ -1,7 +1,6 @@
+"./Src/ContextSwitch.o"
 "./Src/gpio.o"
 "./Src/io.o"
 "./Src/main.o"
-"./Src/syscalls.o"
-"./Src/sysmem.o"
 "./Src/uart.o"
 "./Startup/startup_stm32f429zitx.o"

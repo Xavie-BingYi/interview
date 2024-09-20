@@ -44,3 +44,34 @@ void io_writeMask(int addr, int data, int mask) {
 	 *
 	 * */
 }
+
+/////////////// for compiler
+
+void _exit(int status) {
+  while (1);  // 無窮迴圈，停在此處
+}
+
+int _close(int file) {
+  return -1;
+}
+
+int _lseek(int file, int ptr, int dir) {
+  return 0;
+}
+
+int _read(int file, char *ptr, int len) {
+  return 0;
+}
+
+int _write(int file, char *ptr, int len) {
+  return 0;
+}
+
+void *_sbrk(int incr) {
+  static char heap[1000];
+  static char *heap_end = heap;
+  char *prev_heap_end = heap_end;
+
+  heap_end += incr;
+  return (void *) prev_heap_end;
+}

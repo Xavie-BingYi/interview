@@ -1,3 +1,16 @@
+
+# 待辦事項
+1. context switch 是什麼
+2. startup.c 在做什麼
+3. linker.ld 是什麼
+4. 看 Makefile (知道幹嘛就好)
+5. 中斷是什麼
+
+# 參考資料
+- 筆記：<https://hackmd.io/@zoanana990/S1RySgR3A>
+- MarkDown語法：<https://hackmd.io/@eMP9zQQ0Qt6I8Uqp2Vqy6w/SyiOheL5N/%2FBVqowKshRH246Q7UDyodFA?type=book>
+- C語言編譯流程 : https://hackmd.io/@zoanana990/S1RySgR3A
+
 # 更新程式碼到 Git 上（使用 Sourcetree）
 在使用 Git 進行版本控制時，檔案通常分為兩種類型：有追蹤的檔案和沒有追蹤的檔案。
 
@@ -28,24 +41,5 @@ git commit -m "你的提交訊息"
 ```commandline=
 git push
 ```
-
-# 待辦事項
-1. 看 Makefile (知道幹嘛就好)
-2. 安裝makefile
-3. context switch 是什麼
-4. 中斷是什麼
-5. startup.c 在做什麼
-6. linker.ld 是什麼
-
-**參考資料**
-- 筆記：<https://hackmd.io/@zoanana990/S1RySgR3A>
-- MarkDown語法：<https://hackmd.io/@eMP9zQQ0Qt6I8Uqp2Vqy6w/SyiOheL5N/%2FBVqowKshRH246Q7UDyodFA?type=book>
-
-
-# 作業系統
-- RTOS基礎知識 : https://www.freertos.org/zh-cn-cmn-s/Documentation/01-FreeRTOS-quick-start/01-Beginners-guide/01-RTOS-fundamentals
-- 作業系統 : https://hackmd.io/@Chang-Chia-Chi/OS-CH3
-- C語言編譯流程 : https://hackmd.io/@zoanana990/S1RySgR3A
-- Context Switch範例 : https://github.com/jserv/mini-arm-os/tree/master/02-ContextSwitch-1
 
 
