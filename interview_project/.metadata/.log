@@ -1,0 +1,31 @@
+!SESSION 2024-09-22 10:34:25.725 -----------------------------------------------
+eclipse.buildId=Version 1.13.2
+java.version=17.0.6
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=zh_TW
+Command-line arguments:  -os win32 -ws win32 -arch x86_64
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2024-09-22 10:34:33.145
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2024-09-22 10:34:33.161
+!MESSAGE Log4j2 initialized with config file C:\Users\Xavier\Documents\interview\interview\.metadata\.log4j2.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2024-09-22 10:34:36.798
+!MESSAGE Started RMI Server, listening on port 41337
+!SESSION 2024-09-22 10:47:16.228 -----------------------------------------------
+eclipse.buildId=Version 1.13.2
+java.version=17.0.6
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=zh_TW
+Framework arguments:  C:\Users\Xavier\Documents\interview\interview\.project
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 C:\Users\Xavier\Documents\interview\interview\.project
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2024-09-22 10:47:22.044
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2024-09-22 10:47:22.044
+!MESSAGE Log4j2 initialized with config file C:\Users\Xavier\Documents\interview\interview\.metadata\.log4j2.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2024-09-22 10:47:26.030
+!MESSAGE Started RMI Server, listening on port 41337
