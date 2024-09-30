@@ -1,10 +1,27 @@
 
 # 待辦事項
-1. context switch 是什麼
-2. startup.c 在做什麼
-3. linker.ld 是什麼
-4. 看 Makefile (知道幹嘛就好)
-5. 中斷是什麼
+1. 中斷是什麼
+面試會問到為甚麼不用中斷而是用polling
+2. context switch 是什麼
+3. 看 Makefile，包含需要了解startup.c linker.ld在做什麼
+4. 製作PPT與練習面試 
+https://hackmd.io/@6PPVul2mS7OX2GuGXlUCDA/behavior_questions
+5. 考古題
+https://hackmd.io/@jQSlhiN3QaGkugpbD4NDAA/rkvNkyQfi
+6. 作業系統(process semaphore memory virtual memory cache filesystem)
+https://youtube.com/playlist?list=PL9jciz8qz_zyO55qECi2PD3k6lgxluYEV&si=ovEepz80kEPKwIKi 
+
+## 排程
+- 9/30 ~ 10/4(5天) 
+    1. context switch(caller, callee, push, pop)：
+    2. 搞懂Makefile
+    3. interrupt(hello.c) : https://github.com/jserv/mini-arm-os/tree/master/05-TimerInterrupt
+    4. https://github.com/jserv/mini-arm-os/tree/master/07-Threads
+- 10/5 ~ 10/12(8天) 複習 SPI, GPIO, UART, printf, 台達工作(陳昕佑出國)
+- 10/13 ~ 10/15(3天) 中斷實作
+- 10/16(1天) 修正面試PPT + PPT加入中斷內容 + 複習PPT內容 + 遞履歷
+- 10/17 ~ 刷考古題後看作業系統
+
 
 # 參考資料
 - 筆記：<https://hackmd.io/@zoanana990/S1RySgR3A>
