@@ -20,6 +20,12 @@ https://youtube.com/playlist?list=PL9jciz8qz_zyO55qECi2PD3k6lgxluYEV&si=ovEepz80
 - 10/5 ~ 10/12(8天) 複習 SPI, GPIO, UART, printf, 台達工作(陳昕佑出國)
 - 10/13 ~ 10/15(3天) 中斷實作
 - 10/16(1天) 修正面試PPT + PPT加入中斷內容 + 複習PPT內容 + 遞履歷
+    - 面試會問的問題 (要人家問甚麼都答得出來的程度)
+        1. 台達工作時 GPIO & SPI 怎麼控的
+        2. SPI的mode(clock/phase) & 協議 & 全/半雙工 & baud rate & 遇到的bug ；如果除頻完後的速度高於slave可以支援的速度會發生甚麼事(掉封包?)
+        3. polling task跟interrupt的差異；thread polling是base on (了解thread;叫chatgpi 寫一個pthread sample code),看作業系統第三,四章
+        4. 作業系統要了解task是甚麼
+
 - 10/17 ~ 刷考古題後看作業系統
 
 

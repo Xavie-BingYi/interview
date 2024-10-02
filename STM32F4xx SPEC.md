@@ -275,6 +275,22 @@ Ref: RM0090 Reference Manual P.957~958<http://www.st.com/web/en/resource/technic
 
 
 ## Fractional baud rate generation的設定
+### 時鐘頻率與 Baud Rate 的關係
+在數據通訊中，時鐘頻率（Clock Frequency） 和 Baud Rate 是兩個關鍵概念，但它們的作用不同：
+
+1. 時鐘頻率（Clock Frequency）：決定每秒的時鐘周期數。比如，若時鐘頻率是 10M Hz，意味著每秒可以產生 10 百萬次時鐘信號。
+2. Baud Rate：指的是每秒能傳輸的比特數。例如，9600 bps 意味著每秒可以傳輸 9600 個比特。
+
+#### 範例：
+假設你需要傳輸 11000 個比特的數據，通訊時鐘頻率為 10M Hz，而 Baud Rate 設定為 9600 bps。
+- 第一秒：你可以在 1 秒內傳輸 9600 個比特，這是由於 Baud Rate 限制了每秒能傳輸的比特數，即使時鐘頻率是 10M Hz，也只會以 9600 bps 傳輸數據。
+- 第二秒：剩餘的 1400 比特將在第二秒繼續傳輸完成。
+
+這意味著即使你的時鐘頻率很高，數據的傳輸速率仍然會受到 Baud Rate 的限制，無法超過 9600 bps。
+
+#### 關鍵點：
+- 時鐘頻率 決定了傳輸過程中每個比特的傳輸速度，但 Baud Rate 限制了每秒可傳輸的總數據量。即使時鐘頻率很高，如果 Baud Rate 設定較低，傳輸速率也會相對較慢。
+---
 接收器和傳送器的Baud rate分別由USART_BRR設置USARTDIV的整數部分(Mantissa)及小數部分(Fraction)，計算方式如下所示:
 
  ![alt text](./note%20image/波特率公式.png)
