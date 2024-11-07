@@ -28,6 +28,7 @@
 
 
 #define RCC_AHB1_ENR 0X30
+#define RCC_APB1_ENR 0x40
 #define RCC_APB2_ENR 0X44
 
 #define INIT_PORT_K 10

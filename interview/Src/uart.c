@@ -1,5 +1,5 @@
 /*
- * uart.c
+ * uart.charactor
  *
  *  Created on: Aug 31, 2024
  *      Author: Xavier
@@ -86,34 +86,41 @@ void usart_txData(int bus, uint8_t tx_buffer){
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-void usart_putc(uint8_t c) {
-	usart_txData(USART1_REGISTER, c);
+void usart_putc(uint8_t charactor) {
+	usart_txData(USART1_REGISTER, charactor);
 }
 
-void usart_printint(int xx, int base, int sgn)
+void usart_printint(int data, int base, int sgn)
 {
   static char digits[] = "0123456789ABCDEF";
   char buf[16];
-  int i, neg;
-  int x;
+  int count, neg;
+  int abs_data;
 
   neg = 0;
-  if(sgn && xx < 0){
+  if(sgn && data < 0){
     neg = 1;
-    x = -xx;
+    abs_data = -data;
   } else {
-    x = xx;
+	abs_data = data;
   }
 
-  i = 0;
+  /*count = 0;
   do{
-    buf[i++] = digits[x % base];
-  }while((x /= base) != 0);
-  if(neg)
-    buf[i++] = '-';
+    buf[count++] = digits[abs_data % base];
+  }while((abs_data /= base) != 0);*/
+  count = 1;
+  for (int i=0; i < count; i++){
+	  buf[i] = digits[abs_data % base];
+	  if ((abs_data /= base) != 0)
+		  count++;
+  }
 
-  while(--i >= 0)
-    usart_putc(buf[i]);
+  if(neg)
+    buf[count++] = '-';
+
+  while(--count >= 0)
+    usart_putc(buf[count]);
 }
 
 void usart_printfloat(float xx) // can't work
@@ -128,50 +135,50 @@ void usart_printfloat(float xx) // can't work
 }
 
 // Only understands %d, %x, %p, %s, %f.
-void usart_printf(const char *fmt, ...)	// TODO, https://github.com/shreshthtuli/xv6/blob/master/printf.c
+void usart_printf(const char *fmt, ...)	// TODO, https://github.com/shreshthtuli/xv6/blob/master/printf.charactor
 {
   char *s;
-  int c, i, state;
-  int *ap;
+  int charactor, i, state;
+  int *argument;
 
   state = 0;
-  ap = (int*)(void*)&fmt + 1;
+  argument = (int*)(void*)&fmt + 1;
   for(i = 0; fmt[i]; i++){
-    c = fmt[i] & 0xff;
+    charactor = fmt[i] & 0xff;
     if(state == 0){
-      if(c == '%'){
+      if(charactor == '%'){
         state = '%';
       } else {
-        usart_putc(c);
+        usart_putc(charactor);
       }
     } else if(state == '%'){
-      if(c == 'd'){
-        usart_printint(*ap, 10, 1);
-        ap++;
-      } else if(c == 'x' || c == 'p'){
-        usart_printint(*ap, 16, 0);
-        ap++;
-      } else if(c == 's'){
-        s = (char*)*ap;
-        ap++;
+      if(charactor == 'd'){
+        usart_printint(*argument, 10, 1);
+        argument++;
+      } else if(charactor == 'x' || charactor == 'p'){
+        usart_printint(*argument, 16, 0);
+        argument++;
+      } else if(charactor == 's'){
+        s = (char*)*argument;
+        argument++;
         if(s == 0)
           s = "(null)";
         while(*s != 0){
           usart_putc(*s);
           s++;
         }
-      } else if(c == 'c'){
-        usart_putc(*ap);
-        ap++;
-      } else if(c == 'f'){ // MOD-2
-        usart_printfloat((float)*ap);
-        ap++;
-      } else if(c == '%'){
-        usart_putc(c);
+      } else if(charactor == 'c'){
+        usart_putc(*argument);
+        argument++;
+      } else if(charactor == 'f'){ // MOD-2
+        usart_printfloat((float)*argument);
+        argument++;
+      } else if(charactor == '%'){
+        usart_putc(charactor);
       } else {
         // Unknown % sequence.  Print it to draw attention.
         usart_putc('%');
-        usart_putc(c);
+        usart_putc(charactor);
       }
       state = 0;
     }

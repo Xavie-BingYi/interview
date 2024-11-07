@@ -20,6 +20,7 @@ C 語言的編譯過程可以大致分為四個主要步驟：
 ### 參考連結
 - <https://chivincent.gitbooks.io/c-tutorial/content/chapter2/compile.html>
 - <https://medium.com/@alastor0325/https-medium-com-alastor0325-compilation-to-linking-c07121e2803>
+- <https://hackmd.io/@zoanana990/S1RySgR3A>
 
 
 ## 預處理 (pre-processing)
