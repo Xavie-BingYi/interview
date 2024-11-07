@@ -35,7 +35,7 @@
 
 
 
-void i2c_rcc_enable(int bus);
+void i2c_rcc_enable(int bus, int i2c);
 void i2c_init(void);
 void i2c_cr2_freq(int bus, int freq);
 void i2c_ccr(int bus, int scl_freq);

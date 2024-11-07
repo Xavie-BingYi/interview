@@ -23,7 +23,6 @@ void i2c_cr2_freq(int bus, int freq){
 void i2c_ccr(int bus, int scl_freq){
 	int i2c_ccr_addr = bus + I2C_CCR;
 	int t_pclk = 1/((io_read(bus + I2C_CR2) & 0X3F)*1000000);
-	usart_printf("%d \n",t_pclk);
 	int t_scl = 1/scl_freq;
 	int ccr_value = (t_scl/2)/t_pclk;
 	io_writeMask(i2c_ccr_addr, ccr_value, 0x0FFF);
@@ -32,7 +31,7 @@ void i2c_ccr(int bus, int scl_freq){
 void i2c_trise(int bus, int trise){
 	int i2c_trise_addr = bus + I2C_TRISE;
 	int t_pclk = 1/((io_read(bus + I2C_CR2) & 0X3F)*1000000);
-	int trise_status = trise/t_plck + 1;
+	int trise_status = trise / t_pclk + 1;
 	io_writeMask(i2c_trise_addr, trise_status, 0X3F);
 }
 
