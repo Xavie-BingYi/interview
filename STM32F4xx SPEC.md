@@ -174,7 +174,14 @@ CCR 位元用於生成 SCL 時鐘的高位和低位，從生成上升邊緣和�
 
 在停止條件生成後，介面會自動返回到從機模式（MSL 位元被清除）。
 
+### FREQ
+- FREQ 位元 指的是 APB 時脈的頻率，通常用來設定 I2C 的暫存器，讓它知道 MCU 的時脈頻率是多少，從而正確生成資料的設置時間和保持時間。
+- TPCLK 是 APB 時脈的週期，也就是每一個時脈週期所需的時間。
 
+換句話說，FREQ 代表的是頻率（例如 MHz），而 TPCLK 代表的是這個頻率對應的時間週期（例如 ns）。
+兩者是互為倒數的關係：`TPCLK = 1 / FREQ`​
+
+因此，當你在 FREQ 位元欄設定 APB 的頻率時，TPCLK 會根據這個頻率來計算。例如，如果 FREQ 設為 8 MHz，TPCLK 就是 125 ns。
 
 # UART (適用STM32F4xx全系列)
 - 協議大全 : <https://wiki.csie.ncku.edu.tw/embedded/USART?revision=0ef36332e497437cb7b1fdabc6f0a33202ab2159>
